@@ -221,14 +221,15 @@ These are especially useful in **open-ended tasks** (dialogue, summarization, cr
 
 One widely used **reference-free metric** is **perplexity**.
 
-* **Definition:** Perplexity measures how well a language model predicts the generated sequence.
-* For a candidate sequence $x = (x_1, x_2, ..., x_T)$:
+* **Definition:** Perplexity measures how well a language model predicts the generated sequence.  
+* For a candidate sequence $x = (x_1, x_2, \ldots, x_T)$:
 
 $$
 \text{Perplexity}(x) = \exp\left(-\frac{1}{T} \sum_{t=1}^{T} \log P(x_t \mid x_{<t})\right)
 $$
 
 * Lower perplexity → the text is more fluent and aligned with natural language patterns learned by the model.
+
 
 ---
 

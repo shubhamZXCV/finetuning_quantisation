@@ -278,7 +278,33 @@ $$
 | **Reference-based** | ROUGE, BLEU, BERTScore                                      | Captures semantic overlap, interpretable, task-specific | Needs human references, penalizes paraphrasing          |
 | **Reference-free**  | Perplexity, QA-based factuality checks, embedding coherence | No need for references, useful in open-ended tasks      | Doesn’t ensure correctness or adequacy, model-dependent |
 
----
+
+
+***
+
+# Bonus: My Proposed Evaluation Metric: Semantic Structure Similarity (SSS)
+
+My proposed metric is **Semantic Structure Similarity (SSS)**.
+
+### Explanation
+
+**SSS** combines the strengths of $n$-gram metrics (like ROUGE/BLEU) and semantic metrics (like BERT Score) while introducing a measure of **syntactic/structural preservation**.
+
+1.  **Semantic Token Matching (STM):** Use a contextualized language model (like BERT) to get embeddings for every token in the candidate ($C$) and the reference ($R$). Calculate the token-to-token similarity (like BERT Score), yielding an $F_1$ score for semantic match.
+2.  **Dependency Parse Alignment (DPA):** For both $C$ and $R$, generate a **dependency parse tree** (a representation of the grammatical relationships between words).
+    * Identify the set of all unique **(head, relation, dependent)** triples in $C$ and $R$.
+    * The DPA score is the $F_1$ score calculated based on the overlap of these structural triples. This checks if the core **relationships** (e.g., *'subject'* of *'verb'*, *'modifier'* of *'noun'*) are preserved.
+3.  **Final SSS Score:** The SSS score is a weighted harmonic mean (or a custom average) of the Semantic Token Matching ($STM$) and the Dependency Parse Alignment ($DPA$):
+    $$SSS = \frac{(1 + \beta^2) \cdot STM \cdot DPA}{(\beta^2 \cdot STM) + DPA}$$
+    (where $\beta$ is a weight, potentially set to 1 for equal weighting).
+
+### Justification: Why SSS is Better
+
+SSS is superior because it addresses the core weaknesses of the other metrics simultaneously:
+
+* **Better than ROUGE/BLEU:** By incorporating **Semantic Token Matching (STM)**, SSS overcomes the reliance on exact word overlap. It correctly rewards generated text that uses synonyms or paraphrasing while preserving the original meaning.
+* **Better than BERT Score:** BERT Score is excellent for semantics but can be insensitive to **significant structural or grammatical changes** that alter the *meaning* (e.g., changing an active sentence to a passive one can yield high BERT Score but reverse the meaning in a subtle context). By incorporating **Dependency Parse Alignment (DPA)**, SSS explicitly checks if the fundamental **grammatical structure** and **relationships** between the key concepts are maintained.
+* **Comprehensive:** SSS ensures that a high score requires the candidate text to be both **semantically equivalent** *and* have a **similar logical/grammatical structure** to the reference, leading to a much stronger correlation with human judgment of quality, especially for tasks requiring precision like factual summarization or instruction following.
 
 
 
